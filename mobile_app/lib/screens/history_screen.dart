@@ -38,11 +38,9 @@ class _HistoryScreenState extends State<HistoryScreen> {
         "${dir.path}/expenses_report_${DateTime.now().millisecondsSinceEpoch}.csv",
       );
       await file.writeAsBytes(bytes);
-      await SharePlus.instance.share(
-        ShareParams(
-          files: [XFile(file.path)],
-          text: "Expense report",
-        ),
+      await Share.shareXFiles(
+        [XFile(file.path)],
+        text: "Expense report",
       );
     } catch (e) {
       if (mounted) {
