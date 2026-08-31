@@ -57,6 +57,29 @@ machine (or via CI) and deploy the backend yourself. Steps below.
      `subosito/flutter-action` to build the APK in CI and attach it to a
      release, if you'd rather not install Flutter locally.
 
+## After running `flutter create .`
+`flutter create .` generates the native android/ios/etc. folders. Two things
+to do once, right after:
+
+1. **Add internet permission for release builds.** `flutter create` only
+   adds it to the debug manifest, so a `flutter build apk --release` build
+   will fail to reach the network with a "Failed host lookup" error until
+   you add this. Open `android/app/src/main/AndroidManifest.xml` and add,
+   inside `<manifest>` and before `<application>`:
+   ```xml
+   <uses-permission android:name="android.permission.INTERNET" />
+   ```
+
+2. **Generate the app icon.** The icon source lives at
+   `assets/icon/icon.png` and is already configured in `pubspec.yaml` via
+   `flutter_launcher_icons`. Run:
+   ```
+   flutter pub get
+   dart run flutter_launcher_icons
+   ```
+   This writes the icon into all the `android/.../mipmap-*` folders. Rebuild
+   the APK afterward for the new icon to show.
+
 ## Categories included by default
 Investment, RD / SIP, Groceries, Vegetables, Non-Veg, Petrol / Fuel,
 Rent / Maintenance, Electricity / Water / Gas, Mobile / Internet, Dining Out,

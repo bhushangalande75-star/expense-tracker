@@ -1,26 +1,32 @@
 import 'package:flutter/material.dart';
 import 'package:google_fonts/google_fonts.dart';
 
-/// A "luxurious" dark + gold theme: deep charcoal backgrounds,
-/// gold accents, and serif display type for a premium feel.
+/// A light, luxurious theme: warm ivory backgrounds, a deep emerald-teal
+/// accent (matching the app icon), and gold highlights for a premium,
+/// airy feel instead of a dark/nightclub look.
 class AppTheme {
-  static const Color background = Color(0xFF0F1115);
-  static const Color surface = Color(0xFF1A1D24);
-  static const Color card = Color(0xFF20242D);
-  static const Color gold = Color(0xFFD4AF37);
-  static const Color goldMuted = Color(0xFFB89430);
-  static const Color textPrimary = Color(0xFFF5F1E8);
-  static const Color textSecondary = Color(0xFFA0A4AE);
-  static const Color danger = Color(0xFFE05D5D);
-  static const Color success = Color(0xFF4CAF7D);
+  static const Color background = Color(0xFFFBF8F2); // warm ivory
+  static const Color surface = Color(0xFFFFFFFF);
+  static const Color card = Color(0xFFFFFFFF);
+  static const Color cardBorder = Color(0xFFEAE3D3);
 
-  static ThemeData get dark {
-    final base = ThemeData.dark(useMaterial3: true);
+  static const Color gold = Color(0xFFB8860B); // deeper gold, reads well on light bg
+  static const Color goldMuted = Color(0xFFD4AF37);
+  static const Color emerald = Color(0xFF0F6D5C); // matches the icon's teal-green
+  static const Color emeraldLight = Color(0xFF17A589);
+
+  static const Color textPrimary = Color(0xFF22262B);
+  static const Color textSecondary = Color(0xFF6B7280);
+  static const Color danger = Color(0xFFC0392B);
+  static const Color success = Color(0xFF1F8A55);
+
+  static ThemeData get light {
+    final base = ThemeData.light(useMaterial3: true);
     return base.copyWith(
       scaffoldBackgroundColor: background,
       colorScheme: base.colorScheme.copyWith(
-        primary: gold,
-        secondary: goldMuted,
+        primary: emerald,
+        secondary: gold,
         surface: surface,
         error: danger,
       ),
@@ -36,6 +42,7 @@ class AppTheme {
           color: textPrimary,
         ),
         bodyMedium: GoogleFonts.inter(color: textSecondary),
+        bodyLarge: GoogleFonts.inter(color: textPrimary),
       ),
       appBarTheme: AppBarTheme(
         backgroundColor: background,
@@ -45,24 +52,25 @@ class AppTheme {
           fontWeight: FontWeight.w600,
           color: textPrimary,
         ),
-        iconTheme: const IconThemeData(color: gold),
+        iconTheme: const IconThemeData(color: emerald),
+        surfaceTintColor: Colors.transparent,
       ),
       cardTheme: CardThemeData(
         color: card,
         elevation: 0,
         shape: RoundedRectangleBorder(
           borderRadius: BorderRadius.circular(20),
-          side: const BorderSide(color: Color(0xFF2D3140), width: 1),
+          side: const BorderSide(color: cardBorder, width: 1),
         ),
       ),
       floatingActionButtonTheme: const FloatingActionButtonThemeData(
-        backgroundColor: gold,
-        foregroundColor: Color(0xFF0F1115),
+        backgroundColor: emerald,
+        foregroundColor: Colors.white,
       ),
       elevatedButtonTheme: ElevatedButtonThemeData(
         style: ElevatedButton.styleFrom(
-          backgroundColor: gold,
-          foregroundColor: const Color(0xFF0F1115),
+          backgroundColor: emerald,
+          foregroundColor: Colors.white,
           padding: const EdgeInsets.symmetric(vertical: 16, horizontal: 24),
           shape: RoundedRectangleBorder(borderRadius: BorderRadius.circular(14)),
           textStyle: GoogleFonts.inter(fontWeight: FontWeight.w600, fontSize: 16),
@@ -70,18 +78,25 @@ class AppTheme {
       ),
       inputDecorationTheme: InputDecorationTheme(
         filled: true,
-        fillColor: surface,
+        fillColor: const Color(0xFFF5F1E6),
         border: OutlineInputBorder(
           borderRadius: BorderRadius.circular(14),
           borderSide: BorderSide.none,
         ),
+        focusedBorder: OutlineInputBorder(
+          borderRadius: BorderRadius.circular(14),
+          borderSide: const BorderSide(color: emerald, width: 1.5),
+        ),
+        labelStyle: const TextStyle(color: textSecondary),
         contentPadding: const EdgeInsets.symmetric(horizontal: 16, vertical: 14),
       ),
       bottomNavigationBarTheme: const BottomNavigationBarThemeData(
         backgroundColor: surface,
-        selectedItemColor: gold,
+        selectedItemColor: emerald,
         unselectedItemColor: textSecondary,
+        elevation: 8,
       ),
+      dividerColor: cardBorder,
     );
   }
 }
