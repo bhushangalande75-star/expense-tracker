@@ -43,9 +43,41 @@ class ApiService {
     return Expense.fromJson(jsonDecode(res.body));
   }
 
+  Future<Expense> updateExpense({
+    required String id,
+    required String categoryId,
+    required double amount,
+    required DateTime date,
+    String? note,
+  }) async {
+    final res = await http.patch(
+      Uri.parse("$baseUrl/expenses/$id"),
+      headers: {"Content-Type": "application/json"},
+      body: jsonEncode({
+        "category_id": categoryId,
+        "amount": amount,
+        "note": note,
+        "expense_date": date.toIso8601String().split('T').first,
+      }),
+    );
+    _check(res);
+    return Expense.fromJson(jsonDecode(res.body));
+  }
+
   Future<void> deleteExpense(String id) async {
     final res = await http.delete(Uri.parse("$baseUrl/expenses/$id"));
     _check(res);
+  }
+
+  /// Returns the raw CSV bytes for the expense report (date, category, amount, note).
+  Future<List<int>> exportExpensesCsv({DateTime? start, DateTime? end}) async {
+    final qp = <String, String>{};
+    if (start != null) qp['start'] = start.toIso8601String().split('T').first;
+    if (end != null) qp['end'] = end.toIso8601String().split('T').first;
+    final uri = Uri.parse("$baseUrl/expenses/export").replace(queryParameters: qp);
+    final res = await http.get(uri);
+    _check(res);
+    return res.bodyBytes;
   }
 
   Future<DashboardResponse> getDashboard(String period, {DateTime? start, DateTime? end}) async {

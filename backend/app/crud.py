@@ -14,18 +14,26 @@ DEFAULT_CATEGORIES = [
     ("Groceries", "shopping_cart", "#D4AF37"),
     ("Vegetables", "eco", "#66BB6A"),
     ("Non-Veg", "set_meal", "#C62828"),
+    ("Milk & Dairy", "icecream", "#F5F5DC"),
     ("Petrol / Fuel", "local_gas_station", "#EF6C00"),
+    ("School Fees / Tuition", "school", "#3949AB"),
+    ("School Bus / Transport", "directions_bus", "#00838F"),
     ("Rent / Maintenance", "home", "#6A1B9A"),
     ("Electricity / Water / Gas", "bolt", "#F9A825"),
     ("Mobile / Internet", "wifi", "#0097A7"),
+    ("Domestic Help", "cleaning_services", "#8D6E63"),
+    ("Household Supplies", "cleaning_services", "#5D4037"),
+    ("Water Can / RO", "water_drop", "#0288D1"),
     ("Dining Out", "restaurant", "#AD1457"),
     ("Entertainment", "movie", "#5E35B1"),
     ("Healthcare", "local_hospital", "#00897B"),
+    ("Personal Care / Salon", "content_cut", "#EC407A"),
     ("Shopping / Clothing", "checkroom", "#8E24AA"),
-    ("Education", "school", "#3949AB"),
+    ("Newspaper / Subscriptions", "newspaper", "#455A64"),
     ("Insurance", "shield", "#455A64"),
     ("EMI / Loan", "credit_card", "#BF360C"),
     ("Travel", "flight", "#00695C"),
+    ("Gifts / Donations", "card_giftcard", "#D81B60"),
     ("Miscellaneous", "more_horiz", "#757575"),
 ]
 
@@ -97,6 +105,19 @@ async def delete_expense(db: AsyncSession, expense_id: uuid.UUID) -> bool:
     result = await db.execute(delete(models.Expense).where(models.Expense.id == expense_id))
     await db.commit()
     return result.rowcount > 0
+
+
+async def export_expenses_csv(db: AsyncSession, start: dt.date | None, end: dt.date | None) -> str:
+    import csv
+    import io
+
+    expenses = await list_expenses(db, start, end)
+    buf = io.StringIO()
+    writer = csv.writer(buf)
+    writer.writerow(["Date", "Category", "Amount", "Note"])
+    for e in expenses:
+        writer.writerow([e.expense_date.isoformat(), e.category.name, f"{float(e.amount):.2f}", e.note or ""])
+    return buf.getvalue()
 
 
 def _bucket_label(period: str, d: dt.date) -> str:

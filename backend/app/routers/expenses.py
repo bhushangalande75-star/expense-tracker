@@ -1,12 +1,28 @@
 import uuid
 import datetime as dt
 from fastapi import APIRouter, Depends, HTTPException
+from fastapi.responses import Response
 from sqlalchemy.ext.asyncio import AsyncSession
 
 from .. import crud, schemas
 from ..database import get_db
 
 router = APIRouter(prefix="/expenses", tags=["expenses"])
+
+
+@router.get("/export")
+async def export_expenses(
+    start: dt.date | None = None,
+    end: dt.date | None = None,
+    db: AsyncSession = Depends(get_db),
+):
+    csv_text = await crud.export_expenses_csv(db, start, end)
+    filename = "expenses_report.csv"
+    return Response(
+        content=csv_text,
+        media_type="text/csv",
+        headers={"Content-Disposition": f'attachment; filename="{filename}"'},
+    )
 
 
 @router.post("", response_model=schemas.ExpenseOut)
