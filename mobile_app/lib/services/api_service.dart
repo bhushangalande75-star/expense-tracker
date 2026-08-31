@@ -3,8 +3,7 @@ import 'package:http/http.dart' as http;
 import '../models/expense.dart';
 
 class ApiService {
-  // Replace with your deployed Render URL, e.g. https://expense-tracker-api.onrender.com
-  static const String baseUrl = "https://YOUR-APP.onrender.com";
+  static const String baseUrl = "https://expense-tracker-8uwu.onrender.com";
 
   Future<List<Category>> getCategories() async {
     final res = await http.get(Uri.parse("$baseUrl/categories"));
