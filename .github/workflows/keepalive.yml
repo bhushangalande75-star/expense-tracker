@@ -1,0 +1,16 @@
+name: Keep Render + Neon Awake
+
+on:
+  schedule:
+    # Every 10 minutes. Render free tier sleeps after 15 min idle,
+    # Neon free tier suspends after 5 min idle by default (configurable in Neon settings).
+    - cron: "*/10 * * * *"
+  workflow_dispatch: {}
+
+jobs:
+  ping:
+    runs-on: ubuntu-latest
+    steps:
+      - name: Ping API health endpoint
+        run: |
+          curl -sS -o /dev/null -w "HTTP %{http_code}\n" "${{ secrets.API_HEALTH_URL }}" || true
