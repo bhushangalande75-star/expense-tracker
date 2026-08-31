@@ -4,9 +4,12 @@ from sqlalchemy.ext.asyncio import create_async_engine, AsyncSession, async_sess
 from sqlalchemy.orm import DeclarativeBase
 
 # Neon gives you a plain psycopg-style URL, e.g.
-# postgresql://user:pass@host/db?sslmode=require
-# asyncpg doesn't understand "sslmode" as a query param (that's a psycopg2 thing),
-# so we strip it out here and pass SSL via connect_args instead.
+# postgresql://user:pass@host/db?sslmode=require&channel_binding=require
+# asyncpg doesn't understand psycopg-only query params like "sslmode" or
+# "channel_binding", so we strip any of those out and pass SSL via
+# connect_args instead.
+_PSYCOPG_ONLY_PARAMS = {"sslmode", "channel_binding", "options", "gssencmode"}
+
 _raw_url = os.environ.get("DATABASE_URL", "")
 if not _raw_url:
     raise RuntimeError("DATABASE_URL environment variable is not set")
@@ -14,7 +17,7 @@ if not _raw_url:
 _raw_url = _raw_url.replace("postgresql://", "postgresql+asyncpg://", 1)
 
 _parts = urlsplit(_raw_url)
-_query_pairs = [(k, v) for k, v in parse_qsl(_parts.query) if k.lower() != "sslmode"]
+_query_pairs = [(k, v) for k, v in parse_qsl(_parts.query) if k.lower() not in _PSYCOPG_ONLY_PARAMS]
 DATABASE_URL = urlunsplit(
     (_parts.scheme, _parts.netloc, _parts.path, urlencode(_query_pairs), _parts.fragment)
 )
